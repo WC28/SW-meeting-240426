@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CQI 2570 · SW Digital Systems</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Noto+Serif+Thai:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:   #0e1825;
+  --paper: #f5f0e8;
+  --cream: #ede8dc;
+  --rule:  #c8bfa8;
+  --teal:  #0a6e61;
+  --teal2: #0d9485;
+  --teal3: #b2e4dc;
+  --gold:  #b07d2a;
+  --gold2: #d4a445;
+  --gold3: #f5e4b8;
+  --red:   #a33020;
+  --muted: #6b6050;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* Subtle crosshatch texture overlay */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,   transparent, transparent 28px, rgba(180,160,120,0.06) 28px, rgba(180,160,120,0.06) 29px),
+    repeating-linear-gradient(90deg,  transparent, transparent 28px, rgba(180,160,120,0.06) 28px, rgba(180,160,120,0.06) 29px);
+  pointer-events:none; z-index:0;
+}
+
+.page {
+  position:relative; z-index:1;
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 36px 36px 44px;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  border-top: 3px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 14px 0 12px;
+  margin-bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+.mast-left { font-size: 11px; color: var(--muted); line-height: 1.6; }
+.mast-center { text-align: center; }
+.mast-right { font-size: 11px; color: var(--muted); text-align: right; line-height: 1.6; }
+
+.issue-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 4px;
+}
+.main-headline {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: clamp(18px, 2.8vw, 26px);
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.main-sub {
+  font-size: 11.5px; color: var(--muted);
+  margin-top: 4px; font-style: italic;
+}
+
+/* ── THIN RULE ── */
+.rule { border: none; border-top: 1px solid var(--rule); margin: 10px 0; }
+.rule-thick { border: none; border-top: 2px solid var(--ink); margin: 10px 0; }
+
+/* ── INTRO ROW ── */
+.intro-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin: 12px 0;
+  align-items: start;
+}
+.intro-text {
+  font-size: 13.5px; line-height: 1.7; color: #2c2418;
+  border-left: 3px solid var(--teal);
+  padding-left: 14px;
+}
+.intro-text strong { color: var(--teal); font-weight: 700; }
+
+.kpi-strip {
+  background: var(--ink);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.kpi-item { text-align: center; }
+.kpi-num {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 28px; font-weight: 900;
+  color: var(--gold2);
+  line-height: 1;
+}
+.kpi-lbl { font-size: 10.5px; color: #bdb09a; margin-top: 1px; }
+.kpi-div { border-top: 1px solid #2e2a24; }
+
+/* ── SECTION HEADER ── */
+.sec-title {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--teal);
+  padding: 4px 0 4px;
+  border-bottom: 1.5px solid var(--teal);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec-badge {
+  background: var(--teal);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 100px;
+  letter-spacing: 1px;
+}
+
+/* ── 5 SYSTEMS GRID ── */
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.sys-card {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 11px 10px;
+  background: #fff;
+  position: relative;
+  transition: box-shadow .2s;
+}
+.sys-card:hover { box-shadow: 0 2px 12px rgba(10,110,97,0.12); }
+
+.sys-num {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 22px; font-weight: 900;
+  color: var(--cream);
+  -webkit-text-stroke: 1.5px var(--rule);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.sys-icon { font-size: 18px; margin-bottom: 6px; display: block; }
+.sys-name {
+  font-size: 11.5px; font-weight: 700; color: var(--teal);
+  line-height: 1.3; margin-bottom: 4px;
+}
+.sys-name-en {
+  font-size: 9.5px; color: var(--muted); font-style: italic;
+  margin-bottom: 6px; line-height: 1.3;
+}
+.sys-desc { font-size: 11px; color: #4a3f32; line-height: 1.5; }
+
+.sys-link {
+  display: inline-block;
+  margin-top: 7px;
+  font-size: 9px;
+  color: var(--teal2);
+  text-decoration: none;
+  border: 1px solid var(--teal3);
+  background: rgba(10,110,97,0.05);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-weight: 600;
+  letter-spacing: .5px;
+}
+.sys-link:hover { background: var(--teal); color: #fff; }
+
+.sys-tag {
+  position: absolute;
+  top: 7px; right: 8px;
+  font-size: 8px; font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: .5px;
+}
+.tag-live { background: #dcfce7; color: #166534; }
+.tag-dev  { background: var(--gold3); color: var(--gold); }
+
+/* ── BOTTOM 3-COL ── */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+/* Infra column */
+.infra-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.infra-item {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: 12px; color: #3d3226; line-height: 1.4;
+}
+.infra-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--teal2); flex-shrink: 0; margin-top: 5px;
+}
+
+/* Timeline column */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item { display: grid; grid-template-columns: 72px 1fr; gap: 10px; align-items: start; }
+.tl-line {
+  display: flex; flex-direction: column; align-items: center;
+}
+.tl-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold2); border: 2px solid var(--paper);
+  outline: 1.5px solid var(--gold2);
+  flex-shrink: 0;
+}
+.tl-connector {
+  width: 1.5px; background: var(--rule); flex: 1; min-height: 18px;
+}
+.tl-period { font-size: 10px; font-weight: 700; color: var(--teal); line-height: 1.3; }
+.tl-body { font-size: 11.5px; color: #3d3226; line-height: 1.45; padding-bottom: 10px; }
+.tl-body b { color: var(--ink); font-weight: 700; display: block; }
+
+/* CQI Objective column */
+.obj-box {
+  background: var(--ink);
+  border-radius: 8px;
+  padding: 14px;
+  height: 100%;
+}
+.obj-title {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 12px; font-weight: 700;
+  color: var(--gold2); margin-bottom: 8px;
+  letter-spacing: .5px;
+}
+.obj-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.obj-item { display: flex; gap: 7px; align-items: flex-start; font-size: 11.5px; color: #d4c8b4; line-height: 1.4; }
+.obj-arrow { color: var(--teal2); font-weight: 700; flex-shrink: 0; }
+
+/* ── FOOTER STRIP ── */
+.footer-strip {
+  border-top: 2px solid var(--ink);
+  margin-top: 14px;
+  padding-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.footer-left { font-size: 10.5px; color: var(--muted); }
+.footer-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--teal);
+  padding: 3px 12px;
+  border: 1.5px solid var(--teal);
+  border-radius: 100px;
+}
+.footer-right { font-size: 10.5px; color: var(--muted); text-align: right; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.page > * { animation: fadeUp .5s ease both; }
+.masthead    { animation-delay: .05s; }
+.intro-row   { animation-delay: .12s; }
+.systems-grid { animation-delay: .2s; }
+.bottom-row  { animation-delay: .28s; }
+.footer-strip{ animation-delay: .35s; }
+
+@media(max-width:720px) {
+  .systems-grid { grid-template-columns: 1fr 1fr; }
+  .bottom-row   { grid-template-columns: 1fr; }
+  .intro-row    { grid-template-columns: 1fr; }
+  .masthead     { grid-template-columns: 1fr; text-align: center; }
+  .mast-right   { text-align: center; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── MASTHEAD ── -->
+  <div class="masthead">
+    <div class="mast-left">
+      กลุ่มงานสังคมสงเคราะห์<br>
+      โรงพยาบาลจิตเวชนครราชสีมาราชนครินทร์<br>
+      <strong>หัวข้อ 3.4 การพัฒนาวิชาการ</strong>
+    </div>
+    <div class="mast-center">
+      <div class="issue-label">แผนผลงาน · ส่งประกวด CQI ปี 2570</div>
+      <div class="main-headline">การพัฒนาเครื่องมือจัดเก็บข้อมูล<br>เพื่อวิเคราะห์กระบวนการสังคมสงเคราะห์</div>
+      <div class="main-sub">ด้วยระบบดิจิทัล Web Application 5 ระบบ · Google Cloud · Telegram Alert</div>
+    </div>
+    <div class="mast-right">
+      ปีงบประมาณ 2570<br>
+      ผู้รับผิดชอบ: หัวหน้าวิชาการ<br>
+      กลุ่มงาน สค.
+    </div>
+  </div>
+  <hr class="rule">
+
+  <!-- ── INTRO ROW ── -->
+  <div class="intro-row">
+    <div class="intro-text">
+      งานสังคมสงเคราะห์จิตเวชยังขาดระบบดิจิทัลที่ครอบคลุมกระบวนการทำงานตั้งแต่ต้นจนจบ ส่งผลให้ข้อมูลเคสกระจัดกระจาย สูญหายในการส่งต่อ และไม่สามารถสรุป KPI ได้ทันเวลา โครงการนี้จึงพัฒนา <strong>Web Application 5 ระบบ</strong> ที่เชื่อมต่อกันบน <strong>Google Cloud</strong> พร้อมการแจ้งเตือน Real-time ผ่าน <strong>Telegram</strong> เพื่อให้นักสังคมสงเคราะห์ทุกคนมีเครื่องมือดิจิทัลที่ใช้งานได้จริงในทุกขั้นตอนของกระบวนการดูแลผู้ป่วย
+    </div>
+    <div class="kpi-strip">
+      <div class="kpi-item">
+        <div class="kpi-num">5</div>
+        <div class="kpi-lbl">ระบบ Web Application</div>
+      </div>
+      <div class="kpi-div"></div>
+      <div class="kpi-item">
+        <div class="kpi-num">8</div>
+        <div class="kpi-lbl">นักสังคมสงเคราะห์ในทีม</div>
+      </div>
+      <div class="kpi-div"></div>
+      <div class="kpi-item">
+        <div class="kpi-num">Real-time</div>
+        <div class="kpi-lbl">แจ้งเตือน Telegram + Email</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule-thick">
+
+  <!-- ── 5 SYSTEMS ── -->
+  <div class="sec-title">
+    <span class="sec-badge">CORE</span>
+    5 ระบบดิจิทัลที่พัฒนา
+  </div>
+
+  <div class="systems-grid">
+
+    <!-- 1 -->
+    <div class="sys-card">
+      <span class="sys-tag tag-live">LIVE</span>
+      <div class="sys-num">01</div>
+      <span class="sys-icon">🟢</span>
+      <div class="sys-name">ระบบลงทะเบียนปฏิบัติงาน</div>
+      <div class="sys-name-en">JVK Social Work Check-in</div>
+      <div class="sys-desc">บันทึก Ward · Activity · ช่วงเวลา ด้วย PIN 4 หลัก Admin Approve + แจ้ง Email อัตโนมัติ</div>
+      <a class="sys-link" href="https://script.google.com/macros/s/AKfycbx52MsYY3x7817YpaSnFNXRzdEiZN9dPVlAJeJzPre4oS6XqZOhja_PIbfVkjWF-pbzjw/exec" target="_blank">เปิดระบบ →</a>
+    </div>
+
+    <!-- 2 -->
+    <div class="sys-card">
+      <span class="sys-tag tag-live">LIVE</span>
+      <div class="sys-num">02</div>
+      <span class="sys-icon">📋</span>
+      <div class="sys-name">ระบบรับเคส</div>
+      <div class="sys-name-en">JVK Social Work Case Intake</div>
+      <div class="sys-desc">รับเคสใหม่ออนไลน์ บันทึก Social Assessment กำหนด SW ผู้รับผิดชอบ แจ้ง Telegram ทันที</div>
+      <a class="sys-link" href="https://script.google.com/macros/s/AKfycbxqDMx6ogysAEtbmMIlc496psxaW7DWUfGzznZe_Wz1c4ioybCt4BP8J90hrqIenuLz/exec" target="_blank">เปิดระบบ →</a>
+    </div>
+
+    <!-- 3 -->
+    <div class="sys-card">
+      <span class="sys-tag tag-live">LIVE</span>
+      <div class="sys-num">03</div>
+      <span class="sys-icon">🤝</span>
+      <div class="sys-name">ระบบบันทึกประชุมสหวิชาชีพ</div>
+      <div class="sys-name-en">JVK Case Conferences</div>
+      <div class="sys-desc">จัดการวาระประชุม บันทึกผล Action Items ติดตามความคืบหน้า ส่งต่อทีมสหวิชาชีพ</div>
+      <a class="sys-link" href="https://script.google.com/macros/s/AKfycbz1l6TC8fkgjDAO99y2cHCev8tkDpSc4d_hkrdEmJAcw_ktnuHVdf3NWDEtcUMy55KSVA/exec" target="_blank">เปิดระบบ →</a>
+    </div>
+
+    <!-- 4 -->
+    <div class="sys-card">
+      <span class="sys-tag tag-live">LIVE</span>
+      <div class="sys-num">04</div>
+      <span class="sys-icon">🏘️</span>
+      <div class="sys-name">ระบบบันทึกการเตรียมชุมชน</div>
+      <div class="sys-name-en">JVK Community Preparation</div>
+      <div class="sys-desc">ติดตาม 5 ขั้นตอนเตรียมชุมชน ประสาน อสม. บันทึก outcome จนถึงวันผู้ป่วยกลับบ้าน</div>
+      <a class="sys-link" href="https://script.google.com/macros/s/AKfycbxuzERx-IJZg0NRHUoTm6wXjXVZxhFJQsl4AQOgNyPbx2Iec4G51OK_5nc4cLLgvZ8h/exec" target="_blank">เปิดระบบ →</a>
+    </div>
+
+    <!-- 5 -->
+    <div class="sys-card">
+      <span class="sys-tag tag-dev">DEV</span>
+      <div class="sys-num">05</div>
+      <span class="sys-icon">⚙️</span>
+      <div class="sys-name">ระบบบริหารจัดการเคส</div>
+      <div class="sys-name-en">JVK SWMS</div>
+      <div class="sys-desc">ศูนย์กลางครบวงจร ติดตามเคส Care Plan Dashboard KPI รายเดือน/ปีงบ เชื่อมทุกระบบ</div>
+      <span class="sys-link" style="cursor:default;opacity:.6;">กำลังพัฒนา</span>
+    </div>
+
+  </div>
+
+  <hr class="rule">
+
+  <!-- ── BOTTOM 3 COLUMNS ── -->
+  <div class="bottom-row">
+
+    <!-- Col 1: Infrastructure -->
+    <div>
+      <div class="sec-title" style="font-size:11px;">
+        <span class="sec-badge">INFRA</span>
+        โครงสร้างระบบ
+      </div>
+      <ul class="infra-list">
+        <li class="infra-item"><div class="infra-dot"></div><div>ฐานข้อมูลบน <strong>Google Sheets / Google Cloud</strong> เข้าถึงได้ทุกอุปกรณ์</div></li>
+        <li class="infra-item"><div class="infra-dot"></div><div>แจ้งเตือน Real-time ผ่าน <strong>Telegram Bot</strong> ทุกครั้งที่มีเคสใหม่หรือ Action</div></li>
+        <li class="infra-item"><div class="infra-dot"></div><div>Email อัตโนมัติยืนยัน Visit Approved ทุก Check-in</div></li>
+        <li class="infra-item"><div class="infra-dot"></div><div>ไม่ต้องติดตั้ง App — เปิดเบราว์เซอร์ใช้งานได้ทันที (มือถือ/แท็บเล็ต/PC)</div></li>
+        <li class="infra-item"><div class="infra-dot"></div><div>Login ระบบ PIN 4 หลัก · Multi-role (SW / Admin)</div></li>
+        <li class="infra-item"><div class="infra-dot"></div><div>KPI Dashboard รายเดือน/ปีงบ อัปเดตอัตโนมัติ ไม่ต้องนับเอง</div></li>
+        <li class="infra-item"><div class="infra-dot" style="background:var(--gold2)"></div><div>กิจกรรม <strong>OJT</strong> ฝึกใช้งานจริง + แลกเปลี่ยนข้อเสนอแนะ + ปรับบทบาทหน้าที่</div></li>
+      </ul>
+    </div>
+
+    <!-- Col 2: Timeline -->
+    <div>
+      <div class="sec-title" style="font-size:11px;">
+        <span class="sec-badge">TIMELINE</span>
+        ระยะเวลาดำเนินงาน
+      </div>
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div>
+            <div class="tl-period">เม.ย. 2568</div>
+          </div>
+          <div class="tl-body">
+            <b>พัฒนาระบบ Check-in + Case Intake</b>
+            ทดสอบกับทีม · ปรับ UI ตามฟีดแบค
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div>
+            <div class="tl-period">พ.ค.–มิ.ย. 2568</div>
+          </div>
+          <div class="tl-body">
+            <b>เปิดใช้จริง 3 ระบบแรก</b>
+            OJT ครั้งที่ 1 · กำหนดบทบาท Admin/SW
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div>
+            <div class="tl-period">ก.ค.–ก.ย. 2568</div>
+          </div>
+          <div class="tl-body">
+            <b>พัฒนา Case Conference + Community</b>
+            เชื่อมต่อ Telegram · ทดสอบ end-to-end
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div>
+            <div class="tl-period">ต.ค. 2568–</div>
+          </div>
+          <div class="tl-body">
+            <b>ครบ 5 ระบบ · เก็บข้อมูลเต็มปีงบ</b>
+            วิเคราะห์ผล · สรุป KPI · ส่งประกวด CQI
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div>
+            <div class="tl-period" style="color:var(--gold)">ปี 2570 🏆</div>
+          </div>
+          <div class="tl-body" style="color:var(--gold);">
+            <b>นำเสนอผลการพัฒนา CQI</b>
+            ขยายผลสู่ระดับโรงพยาบาล
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Col 3: CQI Objectives -->
+    <div>
+      <div class="obj-box">
+        <div class="obj-title">วัตถุประสงค์ CQI 2570</div>
+        <ul class="obj-list">
+          <li class="obj-item"><span class="obj-arrow">→</span>พัฒนาเครื่องมือดิจิทัลที่ครอบคลุมทุกกระบวนการ SW ตั้งแต่ Check-in จนถึง Discharge</li>
+          <li class="obj-item"><span class="obj-arrow">→</span>ลดเวลาการบันทึกและค้นหาข้อมูลเคส ให้ SW มีเวลาดูแลผู้ป่วยมากขึ้น</li>
+          <li class="obj-item"><span class="obj-arrow">→</span>สร้างฐานข้อมูลสถิติรายเดือน/รายปีที่เชื่อถือได้ เพื่อรองรับการวิเคราะห์เชิงนโยบาย</li>
+          <li class="obj-item"><span class="obj-arrow">→</span>ยกระดับการทำงานเป็นทีมด้วย Real-time Notification และระบบ Admin Approval</li>
+          <li class="obj-item"><span class="obj-arrow">→</span>เป็นต้นแบบระบบดิจิทัล SW สำหรับโรงพยาบาลจิตเวชระดับประเทศ</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer-strip">
+    <div class="footer-left">กลุ่มงานสังคมสงเคราะห์ · โรงพยาบาลจิตเวชนครราชสีมาราชนครินทร์<br>พัฒนาโดยหัวหน้าวิชาการ ปีงบประมาณ 2568–2570</div>
+    <div class="footer-tag">CQI 2570</div>
+    <div class="footer-right">ข้อมูล: Google Cloud / Sheets<br>แจ้งเตือน: Telegram + Email</div>
+  </div>
+
+</div>
+</body>
+</html>
